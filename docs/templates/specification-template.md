@@ -1,61 +1,61 @@
-# Specification: Feature Name
+# Especificação: Nome da Funcionalidade
 
 ## Status
-Draft
+Rascunho
 
-## Context
-Describe the problem, need, or opportunity that motivates this feature.
+## Contexto
+Descreva o problema, necessidade ou oportunidade que motiva esta funcionalidade.
 
-## Objective
-Describe the outcome this feature must deliver.
+## Objetivo
+Descreva o resultado que esta funcionalidade deve entregar.
 
-## Scope
-- Item included in this implementation.
+## Escopo
+- Item incluído nesta implementação.
 
-## Out of Scope
-- Item explicitly not included in this implementation.
+## Fora de Escopo
+- Item explicitamente não incluído nesta implementação.
 
-## Business Rules
-- Rule that must be enforced by the system.
+## Regras de Negócio
+- Regra que deve ser aplicada pelo sistema.
 
-## User Roles and Permissions
-- Role: describe what this role can do.
+## Perfis de Usuário e Permissões
+- Perfil: descreva o que este perfil pode fazer.
 
-## Main Flow
-1. Describe the expected successful flow.
+## Fluxo Principal
+1. Descreva o fluxo esperado de sucesso.
 
-## Alternative Flows
-1. Describe relevant alternate or exception flows.
+## Fluxos Alternativos
+1. Descreva fluxos alternativos ou de exceção relevantes.
 
-## API Contracts
+## Contratos de API
 ### Endpoint
 `METHOD /path`
 
-### Request
+### Requisição
 ```json
 {}
 ```
 
-### Success Response
+### Resposta de Sucesso
 ```json
 {}
 ```
 
-### Error Responses
-- `400 Bad Request`: describe when this error occurs.
+### Respostas de Erro
+- `400 Bad Request`: descreva quando este erro ocorre.
 
-## Data Model Impact
-Describe entities, fields, relationships, indexes, or migrations required.
+## Impacto no Modelo de Dados
+Descreva entidades, campos, relacionamentos, índices ou migrations necessárias.
 
-## Technical Notes
-Describe module boundaries, services, events, cache, queues, external integrations, or Swagger requirements.
+## Notas Técnicas
+Descreva limites de módulos, services, eventos, cache, filas, integrações externas ou requisitos de Swagger.
 
-## Acceptance Criteria
-- Given a condition, when an action happens, then an expected result occurs.
+## Critérios de Aceitação
+- Dada uma condição, quando uma ação acontece, então um resultado esperado ocorre.
 
-## Expected Tests
-- Unit tests for business rules.
-- Integration tests for API behavior.
+## Testes Esperados
+- Testes unitários para regras de negócio.
+- Testes de integração para comportamento da API.
 
-## Related ADRs
-- None.
+## ADRs Relacionados
+- Nenhum.

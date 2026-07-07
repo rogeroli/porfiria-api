@@ -1,21 +1,21 @@
-# ADR-0000: Decision Title
+# ADR-0000: Título da Decisão
 
 ## Status
-Draft
+Rascunho
 
-## Context
-Describe the technical or architectural problem that requires a decision.
+## Contexto
+Descreva o problema técnico ou arquitetural que exige uma decisão.
 
-## Decision
-Describe the decision that was made.
+## Decisão
+Descreva a decisão tomada.
 
-## Alternatives Considered
-- Alternative A: describe the option and why it was not selected.
-- Alternative B: describe the option and why it was not selected.
+## Alternativas Consideradas
+- Alternativa A: descreva a opção e por que ela não foi escolhida.
+- Alternativa B: descreva a opção e por que ela não foi escolhida.
 
-## Consequences
-- Positive consequence.
-- Negative consequence, trade-off, or risk.
+## Consequências
+- Consequência positiva.
+- Consequência negativa, trade-off ou risco.
 
-## Related Specifications
-- None.
+## Especificações Relacionadas
+- Nenhuma.
