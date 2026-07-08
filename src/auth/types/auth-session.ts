@@ -4,5 +4,6 @@ export interface AuthSession {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
+  mustChangePassword: boolean;
   user: PublicUser;
 }

@@ -2,14 +2,17 @@ import { ApiProperty } from '@nestjs/swagger';
 import { AuthUserResponseDto } from './auth-user-response.dto';
 
 export class AuthSessionResponseDto {
-  @ApiProperty({ example: 'jwt-access-token' })
+  @ApiProperty()
   accessToken!: string;
 
-  @ApiProperty({ example: 'opaque-refresh-token' })
+  @ApiProperty()
   refreshToken!: string;
 
   @ApiProperty({ example: 1800 })
   expiresIn!: number;
+
+  @ApiProperty({ example: false })
+  mustChangePassword!: boolean;
 
   @ApiProperty({ type: AuthUserResponseDto })
   user!: AuthUserResponseDto;

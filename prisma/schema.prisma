@@ -13,12 +13,19 @@ enum UserProfile {
   RESEARCHER
 }
 
+enum UserStatus {
+  PENDING
+  AVAILABLE
+  CHANGE_PASSWORD
+}
+
 model User {
   id           String      @id @default(uuid())
   name         String
   profile      UserProfile
   email        String      @unique
   passwordHash String
+  status       UserStatus  @default(PENDING)
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 

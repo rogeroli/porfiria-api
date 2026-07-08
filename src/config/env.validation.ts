@@ -7,6 +7,11 @@ enum Environment {
   Test = 'test',
 }
 
+enum MailDriver {
+  Console = 'console',
+  Smtp = 'smtp',
+}
+
 class EnvironmentVariables {
   @IsEnum(Environment)
   NODE_ENV: Environment = Environment.Development;
@@ -31,6 +36,38 @@ class EnvironmentVariables {
   @IsOptional()
   @IsString()
   REFRESH_TOKEN_TTL_HOURS = '24';
+
+  @IsOptional()
+  @IsEnum(MailDriver)
+  MAIL_DRIVER: MailDriver = MailDriver.Console;
+
+  @IsOptional()
+  @IsString()
+  MAIL_HOST = 'smtp.gmail.com';
+
+  @IsOptional()
+  @IsPort()
+  MAIL_PORT = '587';
+
+  @IsOptional()
+  @IsString()
+  MAIL_SECURE = 'false';
+
+  @IsOptional()
+  @IsString()
+  MAIL_USER?: string;
+
+  @IsOptional()
+  @IsString()
+  MAIL_PASSWORD?: string;
+
+  @IsOptional()
+  @IsString()
+  MAIL_FROM_NAME = 'Porfiria Academy';
+
+  @IsOptional()
+  @IsString()
+  MAIL_FROM_ADDRESS?: string;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {

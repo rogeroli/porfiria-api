@@ -1,19 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserProfile } from '../../users/enums/user-profile.enum';
+import { UserStatus } from '../../users/enums/user-status.enum';
 
 export class AuthUserResponseDto {
-  @ApiProperty({ example: '7a9341e7-bf8f-4d15-98fc-5f94192c39cb' })
+  @ApiProperty()
   id!: string;
 
-  @ApiProperty({ example: 'Maria Silva' })
+  @ApiProperty()
   name!: string;
 
-  @ApiProperty({ enum: UserProfile, example: UserProfile.Patient })
+  @ApiProperty({ enum: UserProfile })
   profile!: UserProfile;
 
-  @ApiProperty({ example: 'maria@example.com' })
+  @ApiProperty({ enum: UserStatus })
+  status!: UserStatus;
+
+  @ApiProperty()
   email!: string;
 
-  @ApiProperty({ example: '2026-07-07T00:00:00.000Z' })
+  @ApiProperty()
   createdAt!: Date;
 }
