@@ -1,13 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, Matches, MinLength } from 'class-validator';
+import { Matches, MinLength } from 'class-validator';
 import { PASSWORD_POLICY_MESSAGE, PASSWORD_POLICY_REGEX } from '../constants/password-policy';
 
 export class ChangePasswordDto {
-  @ApiProperty({ example: 'maria@example.com' })
-  @IsEmail({}, { message: 'Informe um email valido.' })
-  email!: string;
-
-  @ApiProperty({ example: 'SenhaTemporaria@123' })
+  @ApiProperty({ example: 'SenhaAtual@123' })
   @MinLength(1, { message: 'Informe a senha atual.' })
   currentPassword!: string;
 

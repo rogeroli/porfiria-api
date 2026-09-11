@@ -1,3 +1,6 @@
+import multipart from '@fastify/multipart';
+import fastifyStatic from '@fastify/static';
+import { join } from 'path';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
@@ -9,9 +12,30 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 
+  await app.register(multipart, {
+    limits: {
+      fileSize: 1024 * 1024 * 200,
+    },
+  });
+  await app.register(fastifyStatic, {
+    root: join(process.cwd(), 'uploads'),
+    prefix: '/uploads/',
+  });
+
+  const allowedOrigins = Array.from(
+    new Set([
+      process.env.WEB_APP_URL ?? 'http://localhost:3001',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001',
+    ]),
+  );
+
   app.enableCors({
-    origin: process.env.WEB_APP_URL ?? 'http://localhost:3001',
+    origin: allowedOrigins,
     credentials: true,
+    methods: ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
@@ -34,7 +58,8 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('docs', app, swaggerDocument);
 
   const port = process.env.PORT ?? '3000';
-  await app.listen(Number(port), '0.0.0.0');
+  const host = process.env.API_HOST ?? '127.0.0.1';
+  await app.listen(Number(port), host);
 }
 
 void bootstrap();

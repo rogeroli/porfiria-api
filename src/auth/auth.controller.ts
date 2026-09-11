@@ -1,5 +1,7 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { AuthSessionResponseDto } from './dto/auth-session-response.dto';
 import { AuthUserResponseDto } from './dto/auth-user-response.dto';
@@ -11,6 +13,7 @@ import { LogoutResponseDto } from './dto/logout-response.dto';
 import { MessageResponseDto } from './dto/message-response.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { JwtAuthenticatedUser } from './types/jwt-authenticated-user';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -37,11 +40,21 @@ export class AuthController {
     return this.authService.forgotPassword(input);
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: AuthUserResponseDto })
+  me(@CurrentUser() user: JwtAuthenticatedUser) {
+    return this.authService.getAuthenticatedUser(user);
+  }
+
   @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: AuthSessionResponseDto })
-  changePassword(@Body() input: ChangePasswordDto) {
-    return this.authService.changePassword(input);
+  changePassword(@CurrentUser() user: JwtAuthenticatedUser, @Body() input: ChangePasswordDto) {
+    return this.authService.changePassword(user.id, input);
   }
 
   @Post('login')

@@ -12,7 +12,6 @@ import * as bcrypt from 'bcrypt';
 import { createHash, randomBytes, randomInt } from 'crypto';
 import { MailService } from '../mail/mail.service';
 import { RedisService } from '../redis/redis.service';
-import { UserProfile } from '../users/enums/user-profile.enum';
 import { UserStatus } from '../users/enums/user-status.enum';
 import { UsersService } from '../users/users.service';
 import { PublicUser } from '../users/types/public-user';
@@ -24,6 +23,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { AuthSession } from './types/auth-session';
 import { StoredEmailConfirmationToken } from './types/stored-email-confirmation-token';
+import { JwtAuthenticatedUser } from './types/jwt-authenticated-user';
 import { StoredRefreshToken } from './types/stored-refresh-token';
 
 const PASSWORD_SALT_ROUNDS = 12;
@@ -57,7 +57,7 @@ export class AuthService {
     this.logger.log(`Criando usuario pendente para confirmacao de email: ${input.email.toLowerCase()}`);
     const user = await this.usersService.create({
       name: input.name,
-      profile: input.profile,
+      profileId: input.profileId,
       email: input.email.toLowerCase(),
       passwordHash,
       status: UserStatus.Pending,
@@ -105,21 +105,31 @@ export class AuthService {
     return this.getPasswordRecoveryMessage();
   }
 
-  async changePassword(input: ChangePasswordDto): Promise<AuthSession> {
+  async getAuthenticatedUser(user: JwtAuthenticatedUser): Promise<PublicUser> {
+    const publicUser = await this.usersService.findPublicById(user.id);
+
+    if (!publicUser) {
+      throw new UnauthorizedException('Usuario autenticado nao encontrado.');
+    }
+
+    return publicUser;
+  }
+
+  async changePassword(userId: string, input: ChangePasswordDto): Promise<AuthSession> {
     if (input.newPassword !== input.confirmPassword) {
       throw new BadRequestException('A confirmacao de senha nao confere.');
     }
 
-    const user = await this.usersService.findByEmail(input.email);
+    const user = await this.usersService.findById(userId);
 
     if (!user) {
-      throw new UnauthorizedException('Email ou senha atual invalidos.');
+      throw new UnauthorizedException('Usuario autenticado nao encontrado.');
     }
 
     const isPasswordValid = await bcrypt.compare(input.currentPassword, user.passwordHash);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Email ou senha atual invalidos.');
+      throw new UnauthorizedException('Senha atual invalida.');
     }
 
     if ((user.status as UserStatus) === UserStatus.Pending) {
@@ -154,14 +164,13 @@ export class AuthService {
       throw new ForbiddenException('Confirme seu email antes de acessar a plataforma.');
     }
 
-    return this.createSession({
-      id: user.id,
-      name: user.name,
-      profile: user.profile as UserProfile,
-      status: user.status as UserStatus,
-      email: user.email,
-      createdAt: user.createdAt,
-    });
+    const publicUser = await this.usersService.findPublicById(user.id);
+
+    if (!publicUser) {
+      throw new UnauthorizedException('Usuario autenticado nao encontrado.');
+    }
+
+    return this.createSession(publicUser);
   }
 
   async refresh(input: RefreshTokenDto): Promise<AuthSession> {
@@ -197,8 +206,9 @@ export class AuthService {
       {
         sub: user.id,
         email: user.email,
-        profile: user.profile,
+        profileId: user.profileId,
         status: user.status,
+        role: user.role,
       },
       {
         secret: this.configService.getOrThrow<string>('JWT_ACCESS_SECRET'),

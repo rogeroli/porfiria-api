@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsEnum, IsString, Matches, MinLength } from 'class-validator';
-import { UserProfile } from '../../users/enums/user-profile.enum';
+import { IsEmail, IsString, IsUUID, Matches, MinLength } from 'class-validator';
 import { PASSWORD_POLICY_MESSAGE, PASSWORD_POLICY_REGEX } from '../constants/password-policy';
 
 export class RegisterUserDto {
@@ -9,9 +8,9 @@ export class RegisterUserDto {
   @MinLength(2)
   name!: string;
 
-  @ApiProperty({ enum: UserProfile, example: UserProfile.Patient })
-  @IsEnum(UserProfile)
-  profile!: UserProfile;
+  @ApiProperty({ example: '11111111-1111-4111-8111-111111111111' })
+  @IsUUID()
+  profileId!: string;
 
   @ApiProperty({ example: 'maria@example.com' })
   @IsEmail()

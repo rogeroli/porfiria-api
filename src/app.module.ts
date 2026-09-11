@@ -4,7 +4,9 @@ import { AuthModule } from './auth/auth.module';
 import { validateEnv } from './config/env.validation';
 import { MailModule } from './mail/mail.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { ProfilesModule } from './profiles/profiles.module';
 import { RedisModule } from './redis/redis.module';
+import { QuestionnairesModule } from './questionnaires/questionnaires.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { RedisModule } from './redis/redis.module';
     PrismaModule,
     RedisModule,
     AuthModule,
+    ProfilesModule,
+    QuestionnairesModule,
   ],
 })
 export class AppModule {}

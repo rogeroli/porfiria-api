@@ -19,15 +19,122 @@ enum UserStatus {
   CHANGE_PASSWORD
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum ProfileStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum QuestionnaireStatus {
+  DRAFT
+  PUBLISHED
+  DISABLED
+}
+
+enum QuestionnaireItemType {
+  QUIZ
+  VIDEO
+}
+
+enum QuestionnaireContentFormat {
+  HTML
+  TXT
+  VIDEO
+  PDF
+}
+
+model Profile {
+  id            String         @id @default(uuid())
+  code          String         @unique
+  name          String
+  description   String?
+  status        ProfileStatus  @default(ACTIVE)
+  users         User[]
+  profileTrails ProfileTrail[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("profiles")
+}
+
 model User {
-  id           String      @id @default(uuid())
-  name         String
-  profile      UserProfile
-  email        String      @unique
-  passwordHash String
-  status       UserStatus  @default(PENDING)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id             String          @id @default(uuid())
+  name           String
+  profileId      String
+  profile        Profile         @relation(fields: [profileId], references: [id])
+  email          String          @unique
+  passwordHash   String
+  status         UserStatus      @default(PENDING)
+  role           UserRole        @default(USER)
+  questionnaires Questionnaire[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@map("users")
+}
+
+model Questionnaire {
+  id                      String                     @id @default(uuid())
+  title                   String
+  description             String
+  contentFormat           QuestionnaireContentFormat
+  contentText             String?
+  contentFilePath         String?
+  contentFileOriginalName String?
+  contentFileMimeType     String?
+  status                  QuestionnaireStatus        @default(DRAFT)
+  createdById             String
+  createdBy               User                       @relation(fields: [createdById], references: [id])
+  items                   QuestionnaireItem[]
+  profileTrails           ProfileTrail[]
+  createdAt               DateTime                   @default(now())
+  updatedAt               DateTime                   @updatedAt
+
+  @@map("questionnaires")
+}
+
+model ProfileTrail {
+  profileId       String
+  questionnaireId String
+  order           Int
+  profile         Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  questionnaire   Questionnaire @relation(fields: [questionnaireId], references: [id], onDelete: Cascade)
+
+  @@id([profileId, questionnaireId])
+  @@unique([profileId, order])
+  @@map("profile_trails")
+}
+
+model QuestionnaireItem {
+  id                String                @id @default(uuid())
+  questionnaireId   String
+  questionnaire     Questionnaire         @relation(fields: [questionnaireId], references: [id], onDelete: Cascade)
+  type              QuestionnaireItemType
+  order             Int
+  question          String?
+  videoPath         String?
+  videoOriginalName String?
+  videoMimeType     String?
+  options           QuizOption[]
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  @@unique([questionnaireId, order])
+  @@map("questionnaire_items")
+}
+
+model QuizOption {
+  id                  String            @id @default(uuid())
+  questionnaireItemId String
+  questionnaireItem   QuestionnaireItem @relation(fields: [questionnaireItemId], references: [id], onDelete: Cascade)
+  text                String
+  isCorrect           Boolean
+  order               Int
+
+  @@unique([questionnaireItemId, order])
+  @@map("quiz_options")
 }

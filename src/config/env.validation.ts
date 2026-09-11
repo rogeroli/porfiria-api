@@ -19,6 +19,10 @@ class EnvironmentVariables {
   @IsPort()
   PORT = '3000';
 
+  @IsOptional()
+  @IsString()
+  API_HOST = '127.0.0.1';
+
   @IsString()
   DATABASE_URL!: string;
 
